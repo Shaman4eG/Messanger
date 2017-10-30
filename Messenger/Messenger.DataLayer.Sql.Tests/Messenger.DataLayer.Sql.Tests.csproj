@@ -48,6 +48,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageRepositoryTests.cs" />
     <Compile Include="ChatRepositoryTests.cs" />
     <Compile Include="UserRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -15,7 +15,7 @@ namespace Messenger.DataLayer.Sql.Tests
         private readonly List<Guid> tempUsers = new List<Guid>();
 
         [TestMethod]
-        public void Create_SaveToDb_UserWithSameData()
+        public void Create_CreateUser_SameUserReturned()
         {
             // arrange
             var expectedUser = new User
@@ -37,8 +37,61 @@ namespace Messenger.DataLayer.Sql.Tests
             Assert.AreEqual(expectedUser.Name, actualUser.Name);
             Assert.AreEqual(expectedUser.LastName, actualUser.LastName);
             Assert.AreEqual(expectedUser.Email, actualUser.Email);
-            Assert.AreEqual(expectedUser.Avatar, actualUser.Avatar);
             Assert.AreEqual(expectedUser.Password, actualUser.Password);
+            Assert.AreEqual(expectedUser.Avatar, actualUser.Avatar);
+        }
+
+        [TestMethod]
+        public void Create_SaveUserToDb_SameUserInDb()
+        {
+            // arrange
+            var expectedUser = new User
+            {
+                Name = "testName",
+                LastName = "testLastName",
+                Email = "testEmail@mail.ru",
+                Password = "testPassword",
+                Avatar = new byte[] { 1, 2, 3 }
+            };
+
+            // act
+            var repository = new UserRepository(connectionString);
+            repository.Create(expectedUser);
+            var actualUser = repository.Get(expectedUser.Id);
+
+            tempUsers.Add(expectedUser.Id);
+
+            // asserts
+            Assert.AreEqual(expectedUser.Name, actualUser.Name);
+            Assert.AreEqual(expectedUser.LastName, actualUser.LastName);
+            Assert.AreEqual(expectedUser.Email, actualUser.Email);
+            Assert.AreEqual(expectedUser.Password, actualUser.Password);
+            CollectionAssert.AreEqual(expectedUser.Avatar, actualUser.Avatar);
+        }
+
+        [TestMethod]
+        public void Delete_RemoveUserFromDb_NoUserWithPassedIdInDb()
+        {
+            // arrange
+            var userToDelete = new User
+            {
+                Name = "testName",
+                LastName = "testLastName",
+                Email = "testEmail@mail.ru",
+                Password = "testPassword",
+                Avatar = new byte[] { 1, 2, 3 }
+            };
+
+            // act
+            var repository = new UserRepository(connectionString);
+            userToDelete.Id = repository.Create(userToDelete).Id;
+            repository.Delete(userToDelete.Id);
+            var user = repository.Get(userToDelete.Id);
+
+            tempUsers.Add(userToDelete.Id);
+
+            // asserts
+            Assert.IsNull(user);
         }
 
         [TestMethod]
@@ -50,8 +103,8 @@ namespace Messenger.DataLayer.Sql.Tests
                 Name = "testName",
                 LastName = "testLastName",
                 Email = "testEmail@mail.ru",
-                Avatar = new byte[] { 1, 2, 3 },
-                Password = "testPassword"
+                Password = "testPassword",
+                Avatar = new byte[] { 1, 2, 3 }
             };
 
             // act
@@ -77,31 +130,6 @@ namespace Messenger.DataLayer.Sql.Tests
 
             // asserts
             Assert.IsNull(recievedUser);
-        }
-
-        [TestMethod]
-        public void Delete_RemoveFromDb_UserDeleted()
-        {
-            // arrange
-            var userToDelete = new User
-            {
-                Name = "testName",
-                LastName = "testLastName",
-                Email = "testEmail@mail.ru",
-                Avatar = new byte[] { 1, 2, 3 },
-                Password = "testPassword"
-            };
-
-            // act
-            var repository = new UserRepository(connectionString);
-            userToDelete.Id = repository.Create(userToDelete).Id;
-            repository.Delete(userToDelete.Id);
-            var user = repository.Get(userToDelete.Id);
-
-            tempUsers.Add(userToDelete.Id);
-
-            // asserts
-            Assert.IsNull(user);
         }
 
         [TestCleanup]

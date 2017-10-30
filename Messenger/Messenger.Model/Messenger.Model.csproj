@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attachment.cs" />
     <Compile Include="ChatType.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Chat.cs" />

@@ -39,8 +39,13 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageRepositoryInputValidator.cs" />
+    <Compile Include="MessageRepository.cs" />
     <Compile Include="ChatRepository.cs" />
+    <Compile Include="ChatRepositoryInputValidator.cs" />
+    <Compile Include="InputRestrictionsAndDefaultValues.cs" />
     <Compile Include="UserRepository.cs" />
+    <Compile Include="UserRepositoryInputValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
