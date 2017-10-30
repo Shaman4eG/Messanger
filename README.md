@@ -1,2 +1,2 @@
-# Messanger
-Simple messanger application
+# Messenger
+Simple messenger application
