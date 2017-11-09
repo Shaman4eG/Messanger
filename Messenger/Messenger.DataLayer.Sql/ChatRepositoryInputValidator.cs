@@ -42,14 +42,14 @@ namespace Messenger.DataLayer.Sql
             if (chat.Type == ChatType.group &&
                 chat.Name == null)
             {
-                chat.Name = InputRestrictionsAndDefaultValues.DefaultChatName;
+                chat.Name = InputConstraintsAndDefaultValues.DefaultChatName;
             }
 
             // Set chat Avatar
             if (chat.Type == ChatType.group &&
                 chat.Avatar == null)
             {
-                chat.Avatar = InputRestrictionsAndDefaultValues.DefaultUserAvatar;
+                chat.Avatar = InputConstraintsAndDefaultValues.DefaultUserAvatar;
             }
 
             // Remove chat Admin in personal chat
@@ -76,8 +76,8 @@ namespace Messenger.DataLayer.Sql
             if (chat.Name == null) return true;
 
             else return (
-                            chat.Name.Length >= InputRestrictionsAndDefaultValues.MinUserNameLength &&
-                            chat.Name.Length <= InputRestrictionsAndDefaultValues.MaxUserNameLength 
+                            chat.Name.Length >= InputConstraintsAndDefaultValues.MinUserNameLength &&
+                            chat.Name.Length <= InputConstraintsAndDefaultValues.MaxUserNameLength 
                         );
         }
 

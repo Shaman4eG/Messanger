@@ -15,7 +15,7 @@ namespace Messenger.DataLayer.Sql
         private bool ValidateCreate_CheckNull(User user)
         {
             if (user == null) return false;
-            if (user.Avatar == null) user.Avatar = InputRestrictionsAndDefaultValues.DefaultUserAvatar;
+            if (user.Avatar == null) user.Avatar = InputConstraintsAndDefaultValues.DefaultUserAvatar;
 
             return  (
                         user.Name       != null &&
@@ -28,14 +28,14 @@ namespace Messenger.DataLayer.Sql
         private bool ValidateCreate_CheckRange(User user)
         {
             return  (
-                        user.Name.Length        >= InputRestrictionsAndDefaultValues.MinUserNameLength      &&
-                        user.Name.Length        <= InputRestrictionsAndDefaultValues.MaxUserNameLength      &&
-                        user.LastName.Length    >= InputRestrictionsAndDefaultValues.MinUserLastNameLength  &&
-                        user.LastName.Length    <= InputRestrictionsAndDefaultValues.MaxUserLastNameLength  &&
-                        user.Email.Length       >= InputRestrictionsAndDefaultValues.MinUserEmailLength     &&
-                        user.Email.Length       <= InputRestrictionsAndDefaultValues.MaxUserEmailLength     &&
-                        user.Password.Length    >= InputRestrictionsAndDefaultValues.MinUserPasswordLength  &&
-                        user.Password.Length    <= InputRestrictionsAndDefaultValues.MaxUserPasswordLength
+                        user.Name.Length        >= InputConstraintsAndDefaultValues.MinUserNameLength      &&
+                        user.Name.Length        <= InputConstraintsAndDefaultValues.MaxUserNameLength      &&
+                        user.LastName.Length    >= InputConstraintsAndDefaultValues.MinUserLastNameLength  &&
+                        user.LastName.Length    <= InputConstraintsAndDefaultValues.MaxUserLastNameLength  &&
+                        user.Email.Length       >= InputConstraintsAndDefaultValues.MinUserEmailLength     &&
+                        user.Email.Length       <= InputConstraintsAndDefaultValues.MaxUserEmailLength     &&
+                        user.Password.Length    >= InputConstraintsAndDefaultValues.MinUserPasswordLength  &&
+                        user.Password.Length    <= InputConstraintsAndDefaultValues.MaxUserPasswordLength
                     );
         }
     }

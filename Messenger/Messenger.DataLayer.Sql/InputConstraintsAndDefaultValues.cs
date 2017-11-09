@@ -1,7 +1,10 @@
 ﻿namespace Messenger.DataLayer.Sql
 {
-    static class InputRestrictionsAndDefaultValues
+    public static class InputConstraintsAndDefaultValues
     {
+        // DB connection string
+        public static readonly string ConnectionString = "Server=DANIEL;Database=Messenger;Trusted_Connection=true";
+
         // User
         public static readonly int MinUserNameLength = 1;
         public static readonly int MaxUserNameLength = 25;

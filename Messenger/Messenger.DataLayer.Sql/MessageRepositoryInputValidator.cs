@@ -35,8 +35,8 @@ namespace Messenger.DataLayer.Sql
             else
             {
                 return (
-                            message.Text.Length >= InputRestrictionsAndDefaultValues.MinMessageTextLength &&
-                            message.Text.Length <= InputRestrictionsAndDefaultValues.MaxMessageTextLength
+                            message.Text.Length >= InputConstraintsAndDefaultValues.MinMessageTextLength &&
+                            message.Text.Length <= InputConstraintsAndDefaultValues.MaxMessageTextLength
                         );
             }
     }

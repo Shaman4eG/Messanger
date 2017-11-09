@@ -43,7 +43,7 @@
     <Compile Include="MessageRepository.cs" />
     <Compile Include="ChatRepository.cs" />
     <Compile Include="ChatRepositoryInputValidator.cs" />
-    <Compile Include="InputRestrictionsAndDefaultValues.cs" />
+    <Compile Include="InputConstraintsAndDefaultValues.cs" />
     <Compile Include="UserRepository.cs" />
     <Compile Include="UserRepositoryInputValidator.cs" />
   </ItemGroup>

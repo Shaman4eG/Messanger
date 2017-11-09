@@ -10,7 +10,7 @@ namespace Messenger.DataLayer.Sql.Tests
     [TestClass]
     public class UserRepositoryTests
     {
-        private readonly string connectionString = "Server=DANIEL;Database=Messenger;Trusted_Connection=true";
+        private readonly string connectionString = InputConstraintsAndDefaultValues.ConnectionString;
 
         private readonly List<Guid> tempUsers = new List<Guid>();
 
