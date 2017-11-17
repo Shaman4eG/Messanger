@@ -28,19 +28,7 @@ namespace Messenger.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText =
-                        "INSERT INTO [User] ([Id], [Name], [LastName], [Email], [Password], [Avatar]) " +
-                        "VALUES (@id, @name, @lastName, @email, @password, @avatar)";
-
-                    user.Id = Guid.NewGuid();
-                    command.Parameters.AddWithValue("@id", user.Id);
-                    command.Parameters.AddWithValue("@name", user.Name);
-                    command.Parameters.AddWithValue("@lastName", user.LastName);
-                    command.Parameters.AddWithValue("@email", user.Email);
-                    command.Parameters.AddWithValue("@password", user.Password);
-                    command.Parameters.AddWithValue("@avatar", user.Avatar);
-
-                    command.ExecuteNonQuery();
+                    CreateUserQuery(command, user);
                 }
             }
 
@@ -82,6 +70,24 @@ namespace Messenger.DataLayer.Sql
         }
 
 
+
+
+        private void CreateUserQuery(SqlCommand command, User user)
+        {
+            command.CommandText =
+                "INSERT INTO [User] ([Id], [Name], [LastName], [Email], [Password], [Avatar]) " +
+                "VALUES (@id, @name, @lastName, @email, @password, @avatar)";
+
+            user.Id = Guid.NewGuid();
+            command.Parameters.AddWithValue("@id", user.Id);
+            command.Parameters.AddWithValue("@name", user.Name);
+            command.Parameters.AddWithValue("@lastName", user.LastName);
+            command.Parameters.AddWithValue("@email", user.Email);
+            command.Parameters.AddWithValue("@password", user.Password);
+            command.Parameters.AddWithValue("@avatar", user.Avatar);
+
+            command.ExecuteNonQuery();
+        }
 
         private void GetUserQuery(SqlCommand command, Guid id)
         {

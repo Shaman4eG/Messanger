@@ -5,25 +5,50 @@ namespace Messenger.DataLayer.Sql
 {
     class MessageRepositoryInputValidator
     {
+        private readonly UserRepository userRepository;
+        private readonly ChatRepository chatRepository;
+
+        public MessageRepositoryInputValidator(UserRepository userRepository, ChatRepository chatRepository)
+        {
+            this.userRepository = userRepository;
+            this.chatRepository = chatRepository;
+        }
+
+
+
         public bool ValidateSend(Message message)
         {
             return (
-                        ValidateCreate_CheckNull(message) &&
-                        ValidateCreate_CheckRange(message)
+                        CheckNull(message)           &&
+                        CheckChatExistens(message)   &&
+                        CheckAuthorExistens(message) &&
+                        CheckRange(message)
                     );
         }
 
-        private bool ValidateCreate_CheckNull(Message message)
+
+
+        private bool CheckNull(Message message)
         {
             return (
-                        message        != null &&
-                        message.Author != null &&
-                        message.ChatId != null &&
-                        (message.Text != null || message.AttachmentId != Guid.Empty)
+                        message          != null       &&
+                        message.ChatId   != Guid.Empty &&
+                        message.AuthorId != Guid.Empty &&
+                        (message.Text != null || message.AttachmentId != Guid.Empty) 
                     );
         }
 
-        private bool ValidateCreate_CheckRange(Message message)
+        private bool CheckChatExistens(Message message)
+        {
+            return chatRepository.Get(message.ChatId) != null; 
+        }
+
+        private bool CheckAuthorExistens(Message message)
+        {
+            return userRepository.Get(message.AuthorId) != null;
+        }
+
+        private bool CheckRange(Message message)
         {
             if (message.AttachmentId == Guid.Empty &&
                 message.Text == null)

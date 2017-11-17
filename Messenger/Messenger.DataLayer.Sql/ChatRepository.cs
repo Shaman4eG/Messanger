@@ -18,7 +18,7 @@ namespace Messenger.DataLayer.Sql
         {
             this.connectionString = connectionString;
             this.userRepository = userRepository;
-            validator = new ChatRepositoryInputValidator();
+            validator = new ChatRepositoryInputValidator(connectionString, userRepository);
         }
 
 

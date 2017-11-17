@@ -1,30 +1,51 @@
 ﻿using System;
 using Messenger.Model;
+using System.Data.SqlClient;
+using System.IO;
 
 namespace Messenger.DataLayer.Sql
 {
-    class ChatRepositoryInputValidator
+    public class ChatRepositoryInputValidator
     {
+        private readonly string connectionString;
+        private readonly UserRepository userRepository;
+
+        public ChatRepositoryInputValidator(string connectionString, UserRepository userRepository)
+        {
+            this.connectionString = connectionString; 
+            this.userRepository = userRepository;
+        }
+
+
+
         public bool ValidateCreateAndAddInfo(Chat chat)
         {
-            bool valid = ValidateCreate_CheckNull(chat);
+            bool valid = (
+                                CheckNull(chat) &&
+                                CheckMembersExistens(chat)
+                         );
             if (!valid) return false;
 
             AddChatInfo(chat);
 
-            if (chat.Type == ChatType.group)
+            valid = CheckRange(chat);
+            if (!valid) return false;
+
+            if (chat.Type == ChatType.personal)
             {
-                return ValidateCreate_AdminIsChatMember(chat) &&
-                       ValidateCreate_CheckRange(chat);
+                var exists = SamePersonalChatExists(chat);
+                if (exists) return false;
+                else return true;
             }
-            else return ValidateCreate_CheckRange(chat);
+            else return AdminIsChatMember(chat);
         }
 
-        private bool ValidateCreate_CheckNull(Chat chat)
+
+
+        private bool CheckNull(Chat chat)
         {
             return (
                         chat         != null &&
-                        chat.AdminId != null &&
                         chat.Members != null 
                     );
         }
@@ -56,7 +77,7 @@ namespace Messenger.DataLayer.Sql
             if (chat.Type == ChatType.personal) chat.AdminId = Guid.Empty;
         }
 
-        private bool ValidateCreate_AdminIsChatMember(Chat chat)
+        private bool AdminIsChatMember(Chat chat)
         {
             bool adminIsChatMember = false;
             foreach (User member in chat.Members)
@@ -71,16 +92,104 @@ namespace Messenger.DataLayer.Sql
             return adminIsChatMember;
         }
 
-        private bool ValidateCreate_CheckRange(Chat chat)
+        private bool CheckRange(Chat chat)
         {
-            if (chat.Name == null) return true;
+            if (chat.Name != null)
+            {
+                if (chat.Name.Length < InputConstraintsAndDefaultValues.MinUserNameLength &&
+                    chat.Name.Length > InputConstraintsAndDefaultValues.MaxUserNameLength)
+                {
+                    return false;
+                }
+            }
 
-            else return (
-                            chat.Name.Length >= InputConstraintsAndDefaultValues.MinUserNameLength &&
-                            chat.Name.Length <= InputConstraintsAndDefaultValues.MaxUserNameLength 
-                        );
+            if (chat.Avatar != null)
+            {
+                if (chat.Avatar.Length > InputConstraintsAndDefaultValues.MaxImageSize)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
+        private bool CheckMembersExistens(Chat chat)
+        {
+            foreach (User member in chat.Members)
+                if (userRepository.Get(member.Id) == null) return false;
 
+            return true;
+        }
+
+        private bool SamePersonalChatExists(Chat chat)
+        { 
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    if (chat.Members.Count == 1) return OnePersonChatExists(command, chat);
+                    else return TwoPersonsChatExists(command, chat);
+                }
+            }
+        }
+
+        //TODO: Log exception
+        private bool OnePersonChatExists(SqlCommand command, Chat chat)
+        {
+            try
+            {
+                command.CommandText = Properties.Resources.OnePersonChatExists;
+                command.Parameters.AddWithValue("@user", chat.Members[0].Id);
+                command.ExecuteNonQuery();
+
+                string result = "";
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result = reader.GetString(reader.GetOrdinal("RESULT"));
+                    }
+                }
+
+                if (result == "TRUE") return true;
+                else return false;
+            }
+            catch (Exception ex)
+            {
+                // log "Problems openning file: " + ex.Message
+                return true;
+            }
+        }
+
+        //TODO: Log exception
+        private bool TwoPersonsChatExists(SqlCommand command, Chat chat)
+        {
+            try
+            {
+                command.CommandText = Properties.Resources.TwoPersonsChatExists;
+                command.Parameters.AddWithValue("@user1", chat.Members[0].Id);
+                command.Parameters.AddWithValue("@user2", chat.Members[1].Id);
+                command.ExecuteNonQuery();
+
+                string result = "";
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result = reader.GetString(reader.GetOrdinal("RESULT"));
+                    }
+                }
+
+                if (result == "TRUE") return true;
+                else return false;
+            }
+            catch (Exception ex)
+            {
+                // log "Problems openning file: " + ex.Message
+                return true;
+            }
+        }
     }
 }

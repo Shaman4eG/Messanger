@@ -5,6 +5,9 @@
         // DB connection string
         public static readonly string ConnectionString = "Server=DANIEL;Database=Messenger;Trusted_Connection=true";
 
+        // Image size in bytes (2 MBs)
+        public static readonly int MaxImageSize = 2097152;
+
         // User
         public static readonly int MinUserNameLength = 1;
         public static readonly int MaxUserNameLength = 25;
@@ -27,5 +30,12 @@
         // Message
         public static readonly int MinMessageTextLength = 1;
         public static readonly int MaxMessageTextLength = 7500;
+
+        // Attachment
+        // In bytes. Max == 100 MBs
+        public static readonly int MinFileSize = 1;
+        public static readonly int MaxFileSize = 104857600;
+        public static readonly int MinFileTypeLenght = 1;
+        public static readonly int MaxFileTypeLength = 25;
     }
 }

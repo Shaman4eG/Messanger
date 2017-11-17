@@ -16,9 +16,9 @@ namespace Messenger.DataLayer.Sql
 
         public MessageRepository(string connectionString, UserRepository userRepository)
         {
-            validator = new MessageRepositoryInputValidator();
             this.connectionString = connectionString;
             this.userRepository = userRepository;
+            validator = new MessageRepositoryInputValidator(userRepository, new ChatRepository(connectionString, userRepository));
         }
 
 
@@ -96,10 +96,15 @@ namespace Messenger.DataLayer.Sql
                 command.CommandText =
                         "INSERT INTO [Message] ([Id], [ChatId], [AuthorId], [Date], [Text], [AttachmentId], [SelfDeletion]) " +
                         "VALUES (@id, @chatId, @authorId, @date, @text, @attachmentId, @selfDelition)";
+
                 message.Id = Guid.NewGuid();
+                var date = DateTime.Now;
+                date = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, date.Kind);
+                message.Date = date;
+
                 command.Parameters.AddWithValue("@id", message.Id);
                 command.Parameters.AddWithValue("@chatId", message.ChatId);
-                command.Parameters.AddWithValue("@authorId", message.Author.Id);
+                command.Parameters.AddWithValue("@authorId", message.AuthorId);
                 command.Parameters.AddWithValue("@date", message.Date);
                 command.Parameters.AddWithValue("@text", message.Text ?? (object)DBNull.Value);
                 if (message.AttachmentId == Guid.Empty) command.Parameters.AddWithValue("@attachmentId", DBNull.Value);
@@ -133,7 +138,7 @@ namespace Messenger.DataLayer.Sql
                     {
                         Id = reader.GetGuid(reader.GetOrdinal("Id")),
                         ChatId = reader["ChatId"] == DBNull.Value ? Guid.Empty : reader.GetGuid(reader.GetOrdinal("ChatId")),
-                        Author = userRepository.Get(reader.GetGuid(reader.GetOrdinal("AuthorId"))),
+                        AuthorId = reader.GetGuid(reader.GetOrdinal("AuthorId")),
                         Date = reader.GetDateTime(reader.GetOrdinal("Date")),
                         Text = reader["Text"] == DBNull.Value ? null : reader.GetString(reader.GetOrdinal("Text")),
                         AttachmentId = reader["AttachmentId"] == DBNull.Value ? Guid.Empty : reader.GetGuid(reader.GetOrdinal("AttachmentId")),

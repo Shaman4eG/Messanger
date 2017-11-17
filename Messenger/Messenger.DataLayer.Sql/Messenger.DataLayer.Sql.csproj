@@ -39,11 +39,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttachmentRepository.cs" />
+    <Compile Include="AttachmentRepositoryInputValidator.cs" />
     <Compile Include="MessageRepositoryInputValidator.cs" />
     <Compile Include="MessageRepository.cs" />
     <Compile Include="ChatRepository.cs" />
     <Compile Include="ChatRepositoryInputValidator.cs" />
     <Compile Include="InputConstraintsAndDefaultValues.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="UserRepository.cs" />
     <Compile Include="UserRepositoryInputValidator.cs" />
   </ItemGroup>
@@ -60,6 +67,18 @@
       <Project>{5572f04a-b5a8-4c46-8229-2b87640dc0e8}</Project>
       <Name>Messenger.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OnePersonChatExists.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TwoPersonsChatExists.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

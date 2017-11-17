@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IAttachmentRepository.cs" />
     <Compile Include="IMessageRepository.cs" />
     <Compile Include="IUserRepository.cs" />
     <Compile Include="IChatRepository.cs" />

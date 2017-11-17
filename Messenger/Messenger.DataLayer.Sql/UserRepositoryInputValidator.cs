@@ -35,7 +35,8 @@ namespace Messenger.DataLayer.Sql
                         user.Email.Length       >= InputConstraintsAndDefaultValues.MinUserEmailLength     &&
                         user.Email.Length       <= InputConstraintsAndDefaultValues.MaxUserEmailLength     &&
                         user.Password.Length    >= InputConstraintsAndDefaultValues.MinUserPasswordLength  &&
-                        user.Password.Length    <= InputConstraintsAndDefaultValues.MaxUserPasswordLength
+                        user.Password.Length    <= InputConstraintsAndDefaultValues.MaxUserPasswordLength  &&
+                        user.Avatar.Length      <= InputConstraintsAndDefaultValues.MaxImageSize
                     );
         }
     }

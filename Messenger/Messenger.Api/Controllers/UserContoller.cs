@@ -27,8 +27,20 @@ namespace Messenger.Api.Controllers
         /// <summary>
         /// Create new user.
         /// </summary>
-        /// <param name="user"> New user data </param>
-        /// <returns> Created user </returns>
+        /// <param name="user"> 
+        /// New user data. 
+        /// JSON example:
+        /// {
+        ///	    "Name": "TestName",
+        ///	    "LastName": "TestLastName",
+        ///	    "Email": "test@mail.com",
+        ///	    "Password": "testPassword"
+        /// }
+        /// </param>
+        /// <returns> 
+        /// Success: created user 
+        /// Fail: null
+        /// </returns>
         [Route("")]
         [HttpPost]
         public User Create(User user)
@@ -48,26 +60,15 @@ namespace Messenger.Api.Controllers
             return userRepository.Get(id);
         }
 
-        [Route("lol/arbido/{id:int}")]
-        [HttpGet]
-        public string Get(int id)
+        /// <summary>
+        /// Delete user with given id.
+        /// </summary>
+        /// <param name="id"> User id </param>
+        [Route("{id:guid}")]
+        [HttpDelete]
+        public void Delete(Guid id)
         {
-            return "value";
-        }
-
-        // POST api/values
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
+            userRepository.Delete(id);
         }
     }
 }

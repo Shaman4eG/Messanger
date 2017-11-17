@@ -49,7 +49,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var expectedMessage = new Message
             {
                 ChatId = testChat.Id,
-                Author = userRepository.Get(testUser1.Id),
+                AuthorId = testUser1.Id,
                 Date = DateTime.Now,
                 Text = "Test text",
                 SelfDeletion = false
@@ -65,7 +65,7 @@ namespace Messenger.DataLayer.Sql.Tests
 
             // asserts
             Assert.AreEqual(expectedMessage.ChatId, actualMessage.ChatId);
-            Assert.AreEqual(expectedMessage.Author, actualMessage.Author);
+            Assert.AreEqual(expectedMessage.AuthorId, actualMessage.AuthorId);
             Assert.AreEqual(expectedMessage.Date, actualMessage.Date);
             Assert.AreEqual(expectedMessage.Text, actualMessage.Text);
             Assert.AreEqual(expectedMessage.AttachmentId, actualMessage.AttachmentId);
@@ -107,7 +107,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var expectedMessage = new Message
             {
                 ChatId = testChat.Id,
-                Author = userRepository.Get(testUser1.Id),
+                AuthorId = testUser1.Id,
                 Date = DateTime.Now,
                 Text = "Test text",
                 SelfDeletion = false
@@ -125,7 +125,7 @@ namespace Messenger.DataLayer.Sql.Tests
             // asserts
             Assert.AreEqual(expectedMessage.Id, actualMessage.Id);
             Assert.AreEqual(expectedMessage.ChatId, actualMessage.ChatId);
-            Assert.AreEqual(expectedMessage.Author.Id, actualMessage.Author.Id);
+            Assert.AreEqual(expectedMessage.AuthorId, actualMessage.AuthorId);
             Assert.AreEqual(expectedMessage.Date.Date, actualMessage.Date.Date);
             Assert.AreEqual(expectedMessage.Date.ToShortTimeString(), actualMessage.Date.ToShortTimeString());
             Assert.AreEqual(expectedMessage.Text, actualMessage.Text);
@@ -168,7 +168,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var messageToDelete = new Message
             {
                 ChatId = testChat.Id,
-                Author = userRepository.Get(testUser1.Id),
+                AuthorId = testUser1.Id,
                 Date = DateTime.Now,
                 Text = "Test text",
                 SelfDeletion = false
@@ -222,7 +222,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var expectedMessage = new Message
             {
                 ChatId = testChat.Id,
-                Author = userRepository.Get(testUser1.Id),
+                AuthorId = testUser1.Id,
                 Date = DateTime.Now,
                 Text = "Test text",
                 SelfDeletion = false
@@ -294,7 +294,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var testMessage1 = new Message
             {
                 ChatId = testChat.Id,
-                Author = userRepository.Get(testUser1.Id),
+                AuthorId = testUser1.Id,
                 Date = DateTime.Now,
                 Text = "Test text",
                 SelfDeletion = false
@@ -302,7 +302,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var testMessage2 = new Message
             {
                 ChatId = testChat.Id,
-                Author = userRepository.Get(testUser1.Id),
+                AuthorId = testUser1.Id,
                 Date = DateTime.Now,
                 Text = "Test text2",
                 SelfDeletion = false
