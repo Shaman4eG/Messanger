@@ -47,19 +47,28 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatRepositoryInputValidatorTests.cs" />
-    <Compile Include="MessageRepositoryTests.cs" />
-    <Compile Include="ChatRepositoryTests.cs" />
-    <Compile Include="AttachmentRepositoryTests.cs" />
-    <Compile Include="UserRepositoryTests.cs" />
+    <Compile Include="SourceCode\Chat\ChatRepositoryInputValidatorTests.cs" />
+    <Compile Include="SourceCode\Message\MessageRepositoryTests.cs" />
+    <Compile Include="SourceCode\Chat\ChatRepositoryTests.cs" />
+    <Compile Include="SourceCode\Attachment\AttachmentRepositoryTests.cs" />
+    <Compile Include="SourceCode\User\UserRepositoryInputValidatorTests.cs" />
+    <Compile Include="SourceCode\User\UserRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Messenger.Constants\Messenger.Constants.csproj">
+      <Project>{ec2bdb25-0fa2-4df1-9711-406da8a58f2a}</Project>
+      <Name>Messenger.Constants</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Messenger.DataLayer.Sql\Messenger.DataLayer.Sql.csproj">
       <Project>{2fc1fe63-8186-4d4e-8648-2450ea16e944}</Project>
       <Name>Messenger.DataLayer.Sql</Name>

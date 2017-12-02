@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6FB059CB-5C74-4FF3-AC3B-6358BFCDC455}</ProjectGuid>
+    <ProjectGuid>{EC2BDB25-0FA2-4DF1-9711-406DA8A58F2A}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Messenger.DataLayer</RootNamespace>
-    <AssemblyName>Messenger.DataLayer</AssemblyName>
+    <RootNamespace>Messenger.Constants</RootNamespace>
+    <AssemblyName>Messenger.Constants</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -38,19 +38,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SourceCode\IAttachmentRepository.cs" />
-    <Compile Include="SourceCode\IMessageRepository.cs" />
-    <Compile Include="SourceCode\IUserRepository.cs" />
-    <Compile Include="SourceCode\IChatRepository.cs" />
+    <Compile Include="SourceCode\MessageInputConstraints.cs" />
+    <Compile Include="SourceCode\AttachmentInputConstraints.cs" />
+    <Compile Include="SourceCode\MiscConstants.cs" />
+    <Compile Include="SourceCode\ChatInputConstraints.cs" />
+    <Compile Include="SourceCode\UserInputConstraints.cs" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Messenger.Model\Messenger.Model.csproj">
-      <Project>{5572f04a-b5a8-4c46-8229-2b87640dc0e8}</Project>
-      <Name>Messenger.Model</Name>
-    </ProjectReference>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
