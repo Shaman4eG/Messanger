@@ -9,6 +9,7 @@ namespace Messenger.DataLayer
         Message Send(Message message);
         Message Get(Guid messageId);
         ReadOnlyCollection<Message> GetChatMessages(Guid chatId);
+        ReadOnlyCollection<Message> GetNewChatMessages(Guid chatId, int currentNumberOfFetchedMessages);
         bool Delete(Guid messageId);
     }
 }

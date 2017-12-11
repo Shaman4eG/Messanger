@@ -1,0 +1,85 @@
+﻿<Page x:Class="Messenger.WpfClient.ChatsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Messenger.WpfClient"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="900"
+      Title="ChatsPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="7*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Margin="9, 0, 0, 0">
+            <Button Name="Profile" Content="Profile" Margin="10" Height="50" Width="50" Click="Profile_Click"></Button>
+            <Button Name="Chats" Content="Chats" Margin="10" Height="50" Width="50" Click="Chats_Click"></Button>
+            <Button Name="LogOut" Content="Log Out" Margin="10" Height="50" Width="50" Click="LogOut_Click" ></Button>
+        </StackPanel>
+
+        <Line Grid.ColumnSpan="2"  X1="10" Y1="2" X2="270" Y2="2" Stroke="Black" StrokeThickness="0.5" />
+        <Line X1="10" Y1="2" X2="10" Y2="445" Stroke="Black" StrokeThickness="0.5" />
+        <Line Grid.ColumnSpan="2" X1="10" Y1="445" X2="270" Y2="445" Stroke="Black" StrokeThickness="0.5" />
+
+        <Line Grid.Column="1" X1="0" Y1="2" X2="0" Y2="445" Stroke="Black" StrokeThickness="0.5" />
+        <Line Grid.Column="1" X1="0" Y1="70" X2="180" Y2="70" Stroke="Black" StrokeThickness="0.5" />
+        
+        <Line Grid.Column="2" X1="0" Y1="2" X2="0" Y2="445" Stroke="Black" StrokeThickness="0.5" />
+
+        <StackPanel Grid.Column="1">
+            <StackPanel Orientation="Horizontal">
+                <Button Name="Search" Content="Search" Margin="10" Height="50" Width="70" Click="Search_Click"></Button>
+                <Button Name="AddChat" Content="Add Chat" Margin="10, 10, 10 10" Height="50" Width="70" Click="AddChat_Click"></Button>
+            </StackPanel>
+
+            <ListBox Name="ChatsHeaders" Margin="10, 10, 10, 10" SelectionChanged="ShowChatOnSelection" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <TextBlock Text="{Binding Name}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </StackPanel>
+
+        <StackPanel Grid.Column="2">
+            <ListBox Name="ChatBox" Margin="10, 2, 10, 10" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="400" Visibility="Hidden">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel VerticalAlignment="Bottom"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Date}" />
+                            <TextBlock Text=" "/>
+                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text=" "/>
+                            <TextBlock Text="{Binding Lastname}"/>
+                            <TextBlock Text=": "/>
+                            <TextBlock Text="{Binding Text}" />
+                            <TextBlock Text=" "/>
+                            <Image Source="{Binding Image}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            
+            <StackPanel Orientation="Horizontal" Margin="10, 8, 10, 0">
+                <CheckBox Name="SelfDelitable" VerticalAlignment="Center" IsEnabled="False" Margin="0, 0, 10, 0" ToolTip="Make message self-deletable. When recipient reads it, it would be deleted."></CheckBox>
+                <TextBox Name="MessageText"  Height="25" Width="470" FontSize="18" IsEnabled="False" KeyDown="OnKeyDownHandler"></TextBox>
+                <Button Name="AddAttach" Content="Atch" Padding="5, 0, 5, 0" Margin="5, 0, 5, 0" FontFamily="Calibri" FontSize="18" IsEnabled="False" Click="AddAttach_Click"></Button>
+                <Button Name="SendMessage" Content="Send" Padding="5, 0, 5, 0" FontFamily="Calibri" FontSize="18" IsEnabled="False" Click="SendMessage_Click"></Button>
+            </StackPanel>
+        </StackPanel>
+
+        <Label Name="AddChatLbl" Content="Choose chat or create new one" Grid.Column="2" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 0, 0, 80"></Label>
+    </Grid>
+</Page>

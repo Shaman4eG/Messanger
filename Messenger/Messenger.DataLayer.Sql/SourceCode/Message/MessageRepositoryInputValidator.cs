@@ -58,7 +58,7 @@ namespace Messenger.DataLayer.Sql
 
         private bool CheckAuthorExistens(Message message)
         {
-            try { return userRepository.Get(message.AuthorId) != null; }
+            try { return userRepository.GetById(message.AuthorId) != null; }
             catch (SqlException ex)
             {
                 Utility.SqlExceptionHandler(ex, MethodBase.GetCurrentMethod(), $"authorId = [{message.AuthorId}]", logger);
@@ -75,7 +75,8 @@ namespace Messenger.DataLayer.Sql
 
             if (message.AttachmentId != Guid.Empty) attachmentFound = CheckAttachmentExistens(message);
 
-            if (message.Text != null) textFound = CheckTextRange(message);
+            // TODO: Additional checks
+            if (message.Text != null && message.Text != "") textFound = CheckTextRange(message);
 
             return attachmentFound && textFound;
         }

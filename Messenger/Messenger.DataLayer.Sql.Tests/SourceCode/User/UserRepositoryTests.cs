@@ -53,7 +53,7 @@ namespace Messenger.DataLayer.Sql.Tests
             // act
             var repository = new UserRepository(connectionString);
             repository.Create(expectedUser);
-            var actualUser = repository.Get(expectedUser.Id);
+            var actualUser = repository.GetById(expectedUser.Id);
 
             tempUsers.Add(expectedUser.Id);
 
@@ -81,7 +81,7 @@ namespace Messenger.DataLayer.Sql.Tests
         }
 
         [TestMethod]
-        public void Get_UserFound_RequestedUser()
+        public void GetById_UserFound_RequestedUser()
         {
             // arrange
             var userToFind = new User
@@ -95,7 +95,7 @@ namespace Messenger.DataLayer.Sql.Tests
             // act
             var repository = new UserRepository(connectionString);
             userToFind.Id = repository.Create(userToFind).Id;
-            var recievedUser = repository.Get(userToFind.Id);
+            var recievedUser = repository.GetById(userToFind.Id);
 
             tempUsers.Add(userToFind.Id);
 
@@ -104,14 +104,53 @@ namespace Messenger.DataLayer.Sql.Tests
         }
 
         [TestMethod]
-        public void Get_UserNotFound_Null()
+        public void GetById_UserNotFound_Null()
         {
             // arrange
             var randomId = Guid.NewGuid();
 
             // act
             var repository = new UserRepository(connectionString);
-            var recievedUser = repository.Get(randomId);
+            var recievedUser = repository.GetById(randomId);
+
+            // asserts
+            Assert.IsNull(recievedUser);
+        }
+
+        [TestMethod]
+        public void GetByEmail_UserFound_RequestedUser()
+        {
+            // arrange
+            var userToFind = new User
+            {
+                Name = "testName",
+                LastName = "testLastName",
+                Email = "testEmail@mail.ru",
+                Password = "testPassword"
+            };
+
+            var userEmail = "testEmail@mail.ru";
+
+            // act
+            var repository = new UserRepository(connectionString);
+            userToFind = repository.Create(userToFind);
+            var recievedUser = repository.GetByEmail(userEmail);
+
+            tempUsers.Add(userToFind.Id);
+
+            // asserts
+            Assert.AreEqual(userToFind.Id, recievedUser.Id);
+        }
+
+        [TestMethod]
+        public void GetByEmail_UserNotFound_Null()
+        {
+            // arrange
+            var randomEmail = "dopskfjihreiuhgibadsadsadqwe hriughiorhighriohy irhijtirhyjtorjtgpokr9023904i";
+
+            // act
+            var repository = new UserRepository(connectionString);
+            var recievedUser = repository.GetByEmail(randomEmail);
 
             // asserts
             Assert.IsNull(recievedUser);
@@ -141,7 +180,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var repository = new UserRepository(connectionString);
             newUserData.Id = repository.Create(userToUpdate).Id;
             var updated = repository.Update(newUserData);
-            var userWithUpdatedData = repository.Get(newUserData.Id);
+            var userWithUpdatedData = repository.GetById(newUserData.Id);
 
             tempUsers.Add(userToUpdate.Id); 
 
@@ -177,7 +216,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var repository = new UserRepository(connectionString);
             newUserData.Id = repository.Create(userToUpdate).Id;
             var updated = repository.Update(newUserData);
-            var userWithNotUpdatedData = repository.Get(newUserData.Id);
+            var userWithNotUpdatedData = repository.GetById(newUserData.Id);
 
             tempUsers.Add(userToUpdate.Id);
 
@@ -219,7 +258,7 @@ namespace Messenger.DataLayer.Sql.Tests
             var repository = new UserRepository(connectionString);
             userToDelete.Id = repository.Create(userToDelete).Id;
             var deleted = repository.Delete(userToDelete.Id);
-            var user = repository.Get(userToDelete.Id);
+            var user = repository.GetById(userToDelete.Id);
 
             tempUsers.Add(userToDelete.Id);
 

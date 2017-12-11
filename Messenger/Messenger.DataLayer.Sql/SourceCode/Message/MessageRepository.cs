@@ -166,6 +166,40 @@ namespace Messenger.DataLayer.Sql
         }
 
         /// <summary>
+        /// Gets new messages, depending currentNumberOfFetchedMessages and number of messages in database.
+        /// </summary>
+        /// <param name="chatId"> Chat id </param>
+        /// <param name="currentNumberOfFetchedMessages"> 
+        /// Number of messages that caller currently has. Would be substracted by number 
+        /// of messages of given chat currently in database.
+        /// Difference would tell how many messages should be sent back. 
+        /// </param>
+        /// <returns>
+        /// Found chat messages: success
+        /// Throws SqlException: problems with database
+        /// </returns>
+        public ReadOnlyCollection<Message> GetNewChatMessages(Guid chatId, int currentNumberOfFetchedMessages)
+        {
+            logger.Info($"Attempting to find new chat messages. chatId = [{chatId}], " +
+                        $"currentNumberOfFetchedMessages = [{currentNumberOfFetchedMessages}]");
+
+            ReadOnlyCollection<Message> chatMessages = null;
+
+            try { chatMessages = GetNewChatMessagesAction(chatId, currentNumberOfFetchedMessages); }
+            catch (SqlException ex)
+            {
+                Utility.SqlExceptionHandler(ex, MethodBase.GetCurrentMethod(), $"chatId = [{chatId}], " +
+                    $"currentNumberOfFetchedMessages = [{currentNumberOfFetchedMessages}]", logger);
+            }
+            if (chatMessages == null) chatMessages = new ReadOnlyCollection<Message>(new List<Message>()); 
+
+            logger.Info($"Chat new messages found. chatId = [{chatId}], " +
+                        $"currentNumberOfFetchedMessages = [{currentNumberOfFetchedMessages}]");
+
+            return chatMessages;
+        }
+
+        /// <summary>
         /// Deletes message with given id. 
         /// </summary>
         /// <param name="messageId"> Message id </param>
@@ -273,7 +307,7 @@ namespace Messenger.DataLayer.Sql
 
             using (SqlDataReader reader = command.ExecuteReader())
             {
-                while (reader.Read())
+                if (reader.Read())
                 {
                     message = new Message
                     {
@@ -301,7 +335,7 @@ namespace Messenger.DataLayer.Sql
                 using (var command = connection.CreateCommand())
                 {
                     GetChatMessagesQuery(command, chatId);
-                    chatMessages = RetrieveChatMessages(command);
+                    chatMessages = RetrieveMessagesData(command);
                 }
             }
 
@@ -311,28 +345,110 @@ namespace Messenger.DataLayer.Sql
         private void GetChatMessagesQuery(SqlCommand command, Guid chatId)
         {
             command.CommandText =
-                "SELECT [Id] " +
+                "SELECT * " +
                 "FROM [Message]" +
                 "WHERE [ChatId] = @chatId";
             command.Parameters.AddWithValue("@chatId", chatId);
 
             command.ExecuteNonQuery();
         }
-        
-        private ReadOnlyCollection<Message> RetrieveChatMessages(SqlCommand command)
+
+        private ReadOnlyCollection<Message> RetrieveMessagesData(SqlCommand command)
         {
-            var chatMessages = new List<Message>();
+            var messages = new List<Message>();
 
             using (SqlDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    var message = Get(reader.GetGuid(reader.GetOrdinal("Id")));
-                    chatMessages.Add(message);
+                    messages.Add(new Message
+                    {
+                        Id = reader.GetGuid(reader.GetOrdinal("Id")),
+                        ChatId = reader.GetGuid(reader.GetOrdinal("ChatId")),
+                        AuthorId = reader["AuthorId"] == DBNull.Value ? Guid.Empty : reader.GetGuid(reader.GetOrdinal("AuthorId")),
+                        Date = reader.GetDateTime(reader.GetOrdinal("Date")),
+                        Text = reader["Text"] == DBNull.Value ? null : reader.GetString(reader.GetOrdinal("Text")),
+                        AttachmentId = reader["AttachmentId"] == DBNull.Value ? Guid.Empty : reader.GetGuid(reader.GetOrdinal("AttachmentId")),
+                        SelfDeletion = reader.GetBoolean(reader.GetOrdinal("SelfDeletion"))
+                    });
                 }
             }
 
-            return chatMessages.AsReadOnly();
+            return messages.AsReadOnly();
+        }
+
+        private ReadOnlyCollection<Message> GetNewChatMessagesAction(Guid chatId, int currentNumberOfFetchedMessages)
+        {
+            ReadOnlyCollection<Message> chatMessages = null;
+            int numberOfMessagesInChat = 0;
+            int numberOfNewMessages = 0;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.Transaction = transaction;
+                        GetNumberOfNewMessagesQuery(command, chatId);
+                        numberOfMessagesInChat = RetrieveNumberOfNewMessages(command);
+                    }
+
+                    numberOfNewMessages = numberOfMessagesInChat - currentNumberOfFetchedMessages;
+                    if (numberOfNewMessages == 0) return chatMessages;
+
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.Transaction = transaction;
+                        GetNewChatMessagesQuery(command, chatId, numberOfNewMessages);
+                        chatMessages = RetrieveMessagesData(command);
+                    }
+
+                    transaction.Commit();
+                }
+            }
+
+            return chatMessages;
+        }
+
+        private void GetNumberOfNewMessagesQuery(SqlCommand command, Guid chatId)
+        {
+            command.CommandText =
+                "SELECT COUNT(*) AS NumberOfMessagesInChat " +
+                "FROM [Message] " +
+                "WHERE [ChatId] = @chatId";
+            command.Parameters.AddWithValue("@chatId", chatId);
+
+            command.ExecuteNonQuery();
+        }
+
+        private int RetrieveNumberOfNewMessages(SqlCommand command)
+        {
+            int numberOfMessagesInChat = 0;
+
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    numberOfMessagesInChat = reader.GetInt32(reader.GetOrdinal("NumberOfMessagesInChat"));
+                }
+            }
+
+            return numberOfMessagesInChat;
+        }
+
+        private void GetNewChatMessagesQuery(SqlCommand command, Guid chatId, int numberOfNewMessages)
+        {
+            command.CommandText =
+                "SELECT TOP (@numberOfNewMessages) * " +
+                "FROM [Message] " +
+                "WHERE [ChatId] = @chatId " +
+                "ORDER BY [Date] DESC";
+            command.Parameters.AddWithValue("@numberOfNewMessages", numberOfNewMessages);
+            command.Parameters.AddWithValue("@chatId", chatId);
+
+            command.ExecuteNonQuery();
         }
 
         private void DeleteMessageQuery(Guid messageId)

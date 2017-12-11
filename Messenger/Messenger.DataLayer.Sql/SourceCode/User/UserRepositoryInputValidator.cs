@@ -98,7 +98,7 @@ namespace Messenger.DataLayer.Sql
         /// </summary>
         private bool CheckIfEmailUnchanged(User user)
         {
-            var userToUpdate = userRepository.Get(user.Id);
+            var userToUpdate = userRepository.GetById(user.Id);
 
             if (userToUpdate.Email == user.Email) return true;
             else return false;

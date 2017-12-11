@@ -164,11 +164,6 @@ namespace Messenger.DataLayer.Sql
             {
                 Utility.SqlExceptionHandler(ex, MethodBase.GetCurrentMethod(), $"userId = [{userId}]", logger);
             }
-            if (userChats == null)
-            {
-                logger.Info($"User chats not found. userId = [{userId}]");
-                return null;
-            }
 
             logger.Info($"User chats found. Count = [{userChats.Count}]");
             return userChats;
@@ -370,7 +365,7 @@ namespace Messenger.DataLayer.Sql
             {
                 while (reader.Read())
                 {
-                    var chatMember = userRepository.Get(reader.GetGuid(reader.GetOrdinal("UserId"))); 
+                    var chatMember = userRepository.GetById(reader.GetGuid(reader.GetOrdinal("UserId"))); 
                     members.Add(chatMember);
                 }
             }
@@ -419,7 +414,7 @@ namespace Messenger.DataLayer.Sql
                 }
             }
 
-            return userChats.Count == 0 ? null : userChats.AsReadOnly();
+            return userChats.AsReadOnly();
         }
 
         private void DeleteChatQuery(Guid chatId)

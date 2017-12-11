@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messenger.Api", "Messenger.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messenger.Constants", "Messenger.Constants\Messenger.Constants.csproj", "{EC2BDB25-0FA2-4DF1-9711-406DA8A58F2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messenger.WpfClient", "Messenger.WpfClient\Messenger.WpfClient.csproj", "{C530B29F-5163-44DE-9C60-1B7703A801AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,22 @@ Global
 		{EC2BDB25-0FA2-4DF1-9711-406DA8A58F2A}.Release|x64.Build.0 = Release|Any CPU
 		{EC2BDB25-0FA2-4DF1-9711-406DA8A58F2A}.Release|x86.ActiveCfg = Release|Any CPU
 		{EC2BDB25-0FA2-4DF1-9711-406DA8A58F2A}.Release|x86.Build.0 = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|ARM.Build.0 = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|x64.Build.0 = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Debug|x86.Build.0 = Debug|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|ARM.ActiveCfg = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|ARM.Build.0 = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|x64.ActiveCfg = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|x64.Build.0 = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|x86.ActiveCfg = Release|Any CPU
+		{C530B29F-5163-44DE-9C60-1B7703A801AA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

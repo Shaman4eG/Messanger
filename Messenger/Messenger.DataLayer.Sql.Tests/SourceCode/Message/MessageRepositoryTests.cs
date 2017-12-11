@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Messenger.Model;
 using System.Collections.Generic;
 using Messenger.Constants;
+using System.Linq;
 
 namespace Messenger.DataLayer.Sql.Tests
 {
@@ -280,6 +281,102 @@ namespace Messenger.DataLayer.Sql.Tests
             tempChatMembers.Add(testUser2);
             tempMessages.Add(testMessage1.Id);
             tempMessages.Add(testMessage2.Id);
+
+            // TODO: override Equals() + CollectionAssert.AreEquivalent ???
+            // asserts
+            bool found;
+            // Checks that message Ids are the same.
+            for (int j = 0; j < expectedTestChatMessages.Count; j++)
+            {
+                found = false;
+                for (int i = 0; i < actualTestChatMessages.Count; i++)
+                {
+                    if (expectedTestChatMessages[j].Id == actualTestChatMessages[i].Id)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                Assert.IsTrue(found);
+            }
+        }
+
+        [TestMethod]
+        public void GetNewChatMessages_OneMessageAlreadyFetchedTwoNewMessagesFound_GivenMessagesRetrievedFromDb()
+        {
+            // arrange
+            var testUser1 = new User
+            {
+                Name = "testName",
+                LastName = "testLastName",
+                Email = "testEmail@mail.ru",
+                Password = "testPassword",
+            };
+            var testUser2 = new User
+            {
+                Name = "testName2",
+                LastName = "testLastName2",
+                Email = "testEmail2@mail.ru",
+                Password = "testPassword2",
+            };
+            var chatMembers = new List<User>() { testUser1, testUser2 };
+            var userRepository = new UserRepository(connectionString);
+
+            testUser1 = userRepository.Create(testUser1);
+            testUser2 = userRepository.Create(testUser2);
+
+            var testChat = new Chat()
+            {
+                Members = chatMembers.AsReadOnly()
+            };
+
+            var chatRepository = new ChatRepository(connectionString, userRepository);
+            testChat = chatRepository.Create(testChat);
+
+            var testMessage1 = new Message
+            {
+                ChatId = testChat.Id,
+                AuthorId = testUser1.Id,
+                Date = DateTime.Now,
+                Text = "Test text",
+                SelfDeletion = false
+            };
+            var testMessage2 = new Message
+            {
+                ChatId = testChat.Id,
+                AuthorId = testUser1.Id,
+                Date = DateTime.Now,
+                Text = "Test text2",
+                SelfDeletion = false
+            };
+            var testMessage3 = new Message
+            {
+                ChatId = testChat.Id,
+                AuthorId = testUser1.Id,
+                Date = DateTime.Now,
+                Text = "Test text3",
+                SelfDeletion = false
+            };
+
+            int numberOfFetchedMessages = 1;
+
+            // act
+            var messageRepository = new MessageRepository(connectionString, userRepository);
+            messageRepository.Send(testMessage1);
+            messageRepository.Send(testMessage2);
+            messageRepository.Send(testMessage3);
+            var expectedTestChatMessages = new List<Message> { testMessage2, testMessage3 };
+            var actualTestChatMessages = messageRepository.GetNewChatMessages(testChat.Id, numberOfFetchedMessages);
+            var sortHolder = new List<Message>(actualTestChatMessages);
+            sortHolder.OrderByDescending(o => o.Date);
+            actualTestChatMessages = sortHolder.AsReadOnly();
+
+            tempChats.Add(testChat.Id);
+            tempChatMembers.Add(testUser1);
+            tempChatMembers.Add(testUser2);
+            tempMessages.Add(testMessage1.Id);
+            tempMessages.Add(testMessage2.Id);
+            tempMessages.Add(testMessage3.Id);
 
             // TODO: override Equals() + CollectionAssert.AreEquivalent ???
             // asserts

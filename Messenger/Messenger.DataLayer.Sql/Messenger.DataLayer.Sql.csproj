@@ -43,7 +43,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceCode\Attachment\AttachmentRepository.cs" />
     <Compile Include="SourceCode\Attachment\AttachmentRepositoryInputValidator.cs" />
-    <Compile Include="SourceCode\Utility\InputConstraintsAndDefaultValues.cs" />
     <Compile Include="SourceCode\Message\MessageRepositoryInputValidator.cs" />
     <Compile Include="SourceCode\Message\MessageRepository.cs" />
     <Compile Include="SourceCode\Chat\ChatRepository.cs" />

@@ -54,22 +54,14 @@ namespace Messenger.Api.Controllers
             try {createdUser = userRepository.Create(user); }
             catch (SqlException)
             {
-                var content = $"Failed to create user. " +
-                              $"Name = [{user?.Name}], " +
-                              $"LastName = [{user?.LastName}], " +
-                              $"Email = [{user?.Email}], " +
-                              $"AvatarId = [{user?.AvatarId}]";
+                var content = $"Failed to create user.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (createdUser == null)
             {
-                var content = $"Failed to create user. " +
-                              $"Name = [{user?.Name}], " +
-                              $"LastName = [{user?.LastName}], " +
-                              $"Email = [{user?.Email}], " +
-                              $"AvatarId = [{user?.AvatarId}]";
+                var content = $"Failed to create user.";
                 var reasonPhrase = "Invalid input";
                 Utility.GenerateResponseMessage(MiscConstants.UnprocessableEntity, reasonPhrase, content);
             }
@@ -88,21 +80,54 @@ namespace Messenger.Api.Controllers
         /// </returns>
         [Route("{userId:guid}")]
         [HttpGet]
-        public User Get(Guid userId)
+        public User GetById(Guid userId)
         {
             User foundUser = null;
 
-            try { foundUser = userRepository.Get(userId); }
+            try { foundUser = userRepository.GetById(userId); }
             catch (SqlException)
             {
-                var content = $"Failed to find user. Id = [{userId}]";
+                var content = $"Failed to find user.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (foundUser == null)
             {
-                var content = $"User does not exist. Id = [{userId}]";
+                var content = $"User does not exist.";
+                var reasonPhrase = "User not found";
+                Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
+            }
+
+            return foundUser;
+        }
+
+        /// <summary>
+        /// Gets user by email.
+        /// </summary>
+        /// <param name="email"> Email of user to find </param>
+        /// <returns> 
+        /// Found user data: success
+        /// 404 Not Found : user not found
+        /// 500 Internal Server Error: problems with database 
+        /// </returns>
+        [Route("{email}")]
+        [HttpGet]
+        public User GetByEmail(string email)
+        {
+            User foundUser = null;
+
+            try { foundUser = userRepository.GetByEmail(email); }
+            catch (SqlException)
+            {
+                var content = $"Failed to find user.";
+                var reasonPhrase = "Internal server error";
+                Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
+            }
+
+            if (foundUser == null)
+            {
+                var content = $"User does not exist.";
                 var reasonPhrase = "User not found";
                 Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }
@@ -133,43 +158,28 @@ namespace Messenger.Api.Controllers
             try { updated = userRepository.Update(user); }
             catch (SqlException)
             {
-                var content = $"Failed to update user. " +
-                              $"Id = [{user?.Id}], " +
-                              $"Name = [{user?.Name}], " +
-                              $"LastName = [{user?.LastName}], " +
-                              $"Email = [{user?.Email}], " +
-                              $"AvatarId = [{user?.AvatarId}]";
+                var content = $"Failed to update user.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (updated == null)
             {
-                var content = $"User does not exist. Id = [{user.Id}]";
+                var content = $"User does not exist.";
                 var reasonPhrase = "User not found";
                 Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }
             
             if (updated == true)
             {
-                var content = $"User successfully updated. " +
-                              $"Id = [{user?.Id}], " +
-                              $"Name = [{user?.Name}], " +
-                              $"LastName = [{user?.LastName}], " +
-                              $"Email = [{user?.Email}], " +
-                              $"AvatarId = [{user?.AvatarId}]";
+                var content = $"User successfully updated.";
                 var reasonPhrase = "User updated";
                 Utility.GenerateResponseMessage(HttpStatusCode.OK, reasonPhrase, content);
             }
             
             if (updated == false)
             {
-                var content = $"Failed to update user. " +
-                              $"Id = [{user?.Id}], " +
-                              $"Name = [{user?.Name}], " +
-                              $"LastName = [{user?.LastName}], " +
-                              $"Email = [{user?.Email}], " +
-                              $"AvatarId = [{user?.AvatarId}]";
+                var content = $"Failed to update user.";
                 var reasonPhrase = "Invalid input";
                 Utility.GenerateResponseMessage(MiscConstants.UnprocessableEntity, reasonPhrase, content);
             }
@@ -193,21 +203,21 @@ namespace Messenger.Api.Controllers
             try { deleted = userRepository.Delete(userId); }
             catch (SqlException)
             {
-                var content = $"Failed to delete user. Id = [{userId}]";
+                var content = $"Failed to delete user.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (deleted)
             {
-                var content = $"User successfully deleted. Id = [{userId}]";
+                var content = $"User successfully deleted.";
                 var reasonPhrase = "User deleted";
                 Utility.GenerateResponseMessage(HttpStatusCode.OK, reasonPhrase, content);
             }
             
             if (!deleted)
             {
-                var content = $"Unable to delete user. Id = [{userId}]";
+                var content = $"Unable to delete user.";
                 var reasonPhrase = "User not found";
                 Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }

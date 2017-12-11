@@ -70,7 +70,7 @@ namespace Messenger.DataLayer.Sql
             try
             {
                 foreach (User member in chat.Members)
-                    members.Add(userRepository.Get(member.Id));
+                    members.Add(userRepository.GetById(member.Id));
             }
             catch (SqlException ex)
             {

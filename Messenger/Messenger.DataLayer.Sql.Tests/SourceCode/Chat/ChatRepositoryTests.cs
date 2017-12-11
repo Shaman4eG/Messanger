@@ -252,64 +252,6 @@ namespace Messenger.DataLayer.Sql.Tests
         }
 
         [TestMethod]
-        public void Delete_RemoveChatFromDb_NoChatWithPassedIdInDb()
-        {
-            // arrange
-            var testUser1 = new User
-            {
-                Name = "testName",
-                LastName = "testLastName",
-                Email = "testEmail@mail.ru",
-                Password = "testPassword",
-            };
-            var testUser2 = new User
-            {
-                Name = "testName2",
-                LastName = "testLastName2",
-                Email = "testEmail2@mail.ru",
-                Password = "testPassword2",
-            };
-            var chatMembers = new List<User>() { testUser1, testUser2 };
-            var userRepository = new UserRepository(connectionString);
-
-            testUser1 = userRepository.Create(testUser1);
-            testUser2 = userRepository.Create(testUser2);
-
-            var chatToDelete = new Chat()
-            {
-                Type = ChatType.personal,
-                Members = chatMembers.AsReadOnly()
-            };
-
-            // act
-            var chatRepository = new ChatRepository(connectionString, userRepository);
-            chatRepository.Create(chatToDelete);
-            var deleted = chatRepository.Delete(chatToDelete.Id);
-            var foundChat = chatRepository.Get(chatToDelete.Id);
-
-            tempChats.Add(chatToDelete.Id);
-            tempChatMembers = chatMembers;
-
-            // asserts
-            Assert.IsTrue(deleted);
-            Assert.IsNull(foundChat);
-        }
-
-        [TestMethod]
-        public void Delete_ChatNotFound_FalseReturned()
-        {
-            // arrange
-            var randomId = Guid.NewGuid();
-
-            // act
-            var chatRepository = new ChatRepository(connectionString, new UserRepository(connectionString));
-            var found = chatRepository.Delete(randomId);
-
-            // asserts
-            Assert.IsFalse(found);
-        }
-
-        [TestMethod]
         public void GetUserChats_ChatsFound_SameTwoChatsInDb()
         {
             // arrange
@@ -388,7 +330,7 @@ namespace Messenger.DataLayer.Sql.Tests
         }
 
         [TestMethod]
-        public void GetUserChats_ChatsNotFound_Null()
+        public void Delete_RemoveChatFromDb_NoChatWithPassedIdInDb()
         {
             // arrange
             var testUser1 = new User
@@ -398,18 +340,51 @@ namespace Messenger.DataLayer.Sql.Tests
                 Email = "testEmail@mail.ru",
                 Password = "testPassword",
             };
-
+            var testUser2 = new User
+            {
+                Name = "testName2",
+                LastName = "testLastName2",
+                Email = "testEmail2@mail.ru",
+                Password = "testPassword2",
+            };
+            var chatMembers = new List<User>() { testUser1, testUser2 };
             var userRepository = new UserRepository(connectionString);
+
             testUser1 = userRepository.Create(testUser1);
-            
+            testUser2 = userRepository.Create(testUser2);
+
+            var chatToDelete = new Chat()
+            {
+                Type = ChatType.personal,
+                Members = chatMembers.AsReadOnly()
+            };
+
             // act
             var chatRepository = new ChatRepository(connectionString, userRepository);
-            var actualTestUser1Chats = chatRepository.GetUserChats(testUser1.Id);
+            chatRepository.Create(chatToDelete);
+            var deleted = chatRepository.Delete(chatToDelete.Id);
+            var foundChat = chatRepository.Get(chatToDelete.Id);
 
-            tempChatMembers.Add(testUser1);
+            tempChats.Add(chatToDelete.Id);
+            tempChatMembers = chatMembers;
 
             // asserts
-            Assert.IsNull(actualTestUser1Chats);
+            Assert.IsTrue(deleted);
+            Assert.IsNull(foundChat);
+        }
+
+        [TestMethod]
+        public void Delete_ChatNotFound_FalseReturned()
+        {
+            // arrange
+            var randomId = Guid.NewGuid();
+
+            // act
+            var chatRepository = new ChatRepository(connectionString, new UserRepository(connectionString));
+            var found = chatRepository.Delete(randomId);
+
+            // asserts
+            Assert.IsFalse(found);
         }
 
 

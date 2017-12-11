@@ -101,24 +101,60 @@ namespace Messenger.DataLayer.Sql
         /// Null: user not found 
         /// Throws SqlException: problems with database
         /// </returns>
-        public User Get(Guid userId)
+        public User GetById(Guid userId)
         {
-            logger.Info($"Attempting to find user. Id = [{userId}]");
+            logger.Info($"Attempting to find user by id. Id = [{userId}]");
 
             User foundUser = null;
 
-            try { foundUser = GetUser(userId); }
+            try { foundUser = GetUserById(userId); }
             catch (SqlException ex)
             {
                 Utility.SqlExceptionHandler(ex, MethodBase.GetCurrentMethod(), $"Id = [{userId}]", logger);
             }
             if (foundUser == null)
             {
-                logger.Info($"User not found. Id = [{userId}]");
+                logger.Info($"User not found by id. Id = [{userId}]");
                 return null;
             }
 
-            logger.Info($"User found. " +
+            logger.Info($"User found by id. " +
+                        $"Id = [{foundUser.Id}], " +
+                        $"Name = [{foundUser.Name}], " +
+                        $"LastName = [{foundUser.LastName}], " +
+                        $"Email = [{foundUser.Email}], " +
+                        $"AvatarId = [{foundUser.AvatarId}]");
+
+            return foundUser;
+        }
+
+        /// <summary>
+        /// Gets user by email.
+        /// </summary>
+        /// <param name="email"> Email of user to find </param>
+        /// <returns> 
+        /// Found user data: success
+        /// Null: user not found 
+        /// Throws SqlException: problems with database
+        /// </returns>
+        public User GetByEmail(string email)
+        {
+            logger.Info($"Attempting to find user by email. Email = [{email}]");
+
+            User foundUser = null;
+
+            try { foundUser = GetUserByEmail(email); }
+            catch (SqlException ex)
+            {
+                Utility.SqlExceptionHandler(ex, MethodBase.GetCurrentMethod(), $"Email = [{email}]", logger);
+            }
+            if (foundUser == null)
+            {
+                logger.Info($"User not found by email. Email = [{email}]");
+                return null;
+            }
+
+            logger.Info($"User found by email. " +
                         $"Id = [{foundUser.Id}], " +
                         $"Name = [{foundUser.Name}], " +
                         $"LastName = [{foundUser.LastName}], " +
@@ -149,7 +185,7 @@ namespace Messenger.DataLayer.Sql
 
             User foundUser = null;
 
-            try { foundUser = Get(user.Id); }
+            try { foundUser = GetById(user.Id); }
             catch (SqlException ex)
             {
                 var userData = $"Id = [{user?.Id}], " +
@@ -233,7 +269,7 @@ namespace Messenger.DataLayer.Sql
 
             User foundUser = null;
 
-            try { foundUser = Get(userId); }
+            try { foundUser = GetById(userId); }
             catch (SqlException ex)
             {
                 Utility.SqlExceptionHandler(ex, MethodBase.GetCurrentMethod(), $"Id = [{userId}]", logger);
@@ -254,7 +290,7 @@ namespace Messenger.DataLayer.Sql
             return true;
         }
 
-
+     
 
         /// <summary>
         /// Gives user unique Id.
@@ -288,7 +324,7 @@ namespace Messenger.DataLayer.Sql
             }
         }
 
-        private User GetUser(Guid userId)
+        private User GetUserById(Guid userId)
         {
             User foundUser = null;
 
@@ -297,7 +333,7 @@ namespace Messenger.DataLayer.Sql
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
-                    GetUserQuery(command, userId);
+                    GetUserByIdQuery(command, userId);
                     foundUser = RetrieveUserData(command);
                 }
             }
@@ -305,13 +341,41 @@ namespace Messenger.DataLayer.Sql
             return foundUser;
         }
 
-        private void GetUserQuery(SqlCommand command, Guid userId)
+        private User GetUserByEmail(string email)
+        {
+            User foundUser = null;
+
+            using (var connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (var command = connection.CreateCommand())
+                {
+                    GetUserByEmailQuery(command, email);
+                    foundUser = RetrieveUserData(command);
+                }
+            }
+
+            return foundUser;
+        }
+
+        private void GetUserByIdQuery(SqlCommand command, Guid userId)
         {
             command.CommandText =
                 "SELECT * " +
                 "FROM [User] " +
                 "WHERE [Id] = @id";
             command.Parameters.AddWithValue("@id", userId);
+
+            command.ExecuteNonQuery();
+        }
+
+        private void GetUserByEmailQuery(SqlCommand command, string email)
+        {
+            command.CommandText =
+                "SELECT * " +
+                "FROM [User] " +
+                "WHERE [Email] = @email";
+            command.Parameters.AddWithValue("@email", email);
 
             command.ExecuteNonQuery();
         }

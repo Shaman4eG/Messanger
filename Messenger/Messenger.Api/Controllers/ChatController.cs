@@ -75,22 +75,14 @@ namespace Messenger.Api.Controllers
             try { createdChat = chatRepository.Create(chat); }
             catch (SqlException)
             {
-                var content = $"Failed to create chat. " +
-                              $"AdminId = [{chat?.AdminId}], " +
-                              $"Name = [{chat?.Name}], " +
-                              $"AvatarId = [{chat?.AvatarId}], " +
-                              $"{RepresentChatMembersAsStringOfIds(chat)}";
+                var content = $"Failed to create chat.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (createdChat == null)
             {
-                var content = $"Failed to create chat. " +
-                              $"AdminId = [{chat?.AdminId}], " +
-                              $"Name = [{chat?.Name}], " +
-                              $"AvatarId = [{chat?.AvatarId}], " +
-                              $"{RepresentChatMembersAsStringOfIds(chat)}";
+                var content = $"Failed to create chat.";
                 var reasonPhrase = "Invalid input";
                 Utility.GenerateResponseMessage(MiscConstants.UnprocessableEntity, reasonPhrase, content);
             }
@@ -114,14 +106,14 @@ namespace Messenger.Api.Controllers
             try { foundChat = chatRepository.Get(chatId); }
             catch (SqlException)
             {
-                var content = $"Failed to find chat. Id = [{chatId}]";
+                var content = $"Failed to find chat.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (foundChat == null)
             {
-                var content = $"Chat does not exist. Id = [{chatId}]";
+                var content = $"Chat does not exist.";
                 var reasonPhrase = "Chat not found";
                 Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }
@@ -134,7 +126,6 @@ namespace Messenger.Api.Controllers
         /// </summary>
         /// <param name="userId"> User's id </param>
         /// Found user chats: success
-        /// 404 Not Found : user chats not found 
         /// 500 Internal Server Error: problems with database 
         [Route("getUserChats/{userId:guid}")]
         [HttpGet]
@@ -145,16 +136,9 @@ namespace Messenger.Api.Controllers
             try { foundUserChats = chatRepository.GetUserChats(userId); }
             catch (SqlException)
             {
-                var content = $"Failed to find user chats. userId = [{userId}]";
+                var content = $"Failed to find user chats.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
-            }
-
-            if (foundUserChats == null)
-            {
-                var content = $"User chats not found. userId = [{userId}]";
-                var reasonPhrase = "Chats not found";
-                Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }
 
             return foundUserChats;
@@ -178,46 +162,24 @@ namespace Messenger.Api.Controllers
             try { deleted = chatRepository.Delete(chatId); }
             catch (SqlException)
             {
-                var content = $"Failed to delete chat. Id = [{chatId}]";
+                var content = $"Failed to delete chat.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (deleted)
             {
-                var content = $"Chat successfully deleted. Id = [{chatId}]";
+                var content = $"Chat successfully deleted.";
                 var reasonPhrase = "Chat deleted";
                 Utility.GenerateResponseMessage(HttpStatusCode.OK, reasonPhrase, content);
             }
 
             if (!deleted)
             {
-                var content = $"Unable to delete chat. Id = [{chatId}]";
+                var content = $"Unable to delete chat.";
                 var reasonPhrase = "Chat not found";
                 Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }
-        }
-
-
-
-        private string RepresentChatMembersAsStringOfIds(Chat chat)
-        {
-            var chatData = new StringBuilder("Members = ");
-
-            if (chat?.Members == null)
-            {
-                chatData.Append("[null]");
-                return chatData.ToString();
-            }
-
-            foreach (User member in chat.Members)
-            {
-                chatData.Append($"[{member.Id}], ");
-            }
-            // Removing whitespace and comma after last id.
-            chatData.Remove(chatData.Length - 2, 2);
-
-            return chatData.ToString();
         }
     }
 }

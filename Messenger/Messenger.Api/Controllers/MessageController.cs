@@ -10,6 +10,7 @@ using System.Web.Http;
 
 namespace Messenger.Api.Controllers
 {
+    [System.Diagnostics.DebuggerStepThrough]
     [RoutePrefix("api/messages")]
     public class MessageController : ApiController
     {
@@ -57,24 +58,14 @@ namespace Messenger.Api.Controllers
             try { sentMessage = messageRepository.Send(message); }
             catch (SqlException)
             {
-                var content = $"Failed to send message. " +
-                              $"ChatId = [{message?.ChatId}], " +
-                              $"AuthorId = [{message?.AuthorId}], " +
-                              $"Text = [{message?.Text}], " +
-                              $"AttachmentId = [{message?.AttachmentId}], " +
-                              $"SelfDeletion = [{message?.SelfDeletion.ToString()}]";
+                var content = $"Failed to send message.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (sentMessage == null)
             {
-                var content = $"Failed to send message. " +
-                              $"ChatId = [{message?.ChatId}], " +
-                              $"AuthorId = [{message?.AuthorId}], " +
-                              $"Text = [{message?.Text}], " +
-                              $"AttachmentId = [{message?.AttachmentId}], " +
-                              $"SelfDeletion = [{message?.SelfDeletion.ToString()}]";
+                var content = $"Failed to send message.";
                 var reasonPhrase = "Invalid input";
                 Utility.GenerateResponseMessage(MiscConstants.UnprocessableEntity, reasonPhrase, content);
             }
@@ -98,14 +89,14 @@ namespace Messenger.Api.Controllers
             try { foundMessage = messageRepository.Get(messageId); }
             catch (SqlException)
             {
-                var content = $"Failed to find message. Id = [{messageId}]";
+                var content = $"Failed to find message.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (foundMessage == null)
             {
-                var content = $"Message does not exist. Id = [{messageId}]";
+                var content = $"Message does not exist.";
                 var reasonPhrase = "Message not found";
                 Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }
@@ -128,7 +119,33 @@ namespace Messenger.Api.Controllers
             try { foundChatMessages = messageRepository.GetChatMessages(chatId); }
             catch (SqlException)
             {
-                var content = $"Failed to find chat messages. chatId = [{chatId}]";
+                var content = $"Failed to find chat messages.";
+                var reasonPhrase = "Internal server error";
+                Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
+            }
+
+            return foundChatMessages;
+        }
+
+        /// <summary>
+        /// Gets chat new messages.
+        /// </summary>
+        /// <param name="chatId"> Chat id </param>
+        /// <param name="currentNumberOfFetchedMessages"> Number of messages currently on client. </param>
+        /// <returns>
+        /// Found chat messages: success
+        /// 500 Internal Server Error: problems with database 
+        /// </returns>
+        [Route("getChatNewMessages/{chatId:guid}/{currentNumberOfFetchedMessages:int}")]
+        [HttpGet]
+        public ReadOnlyCollection<Message> GetSeveralLastMessages(Guid chatId, int currentNumberOfFetchedMessages)
+        {
+            ReadOnlyCollection<Message> foundChatMessages = null;
+
+            try { foundChatMessages = messageRepository.GetNewChatMessages(chatId, currentNumberOfFetchedMessages); }
+            catch (SqlException)
+            {
+                var content = $"Failed to find chat new messages.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
@@ -154,21 +171,21 @@ namespace Messenger.Api.Controllers
             try { deleted = messageRepository.Delete(messageId); }
             catch (SqlException)
             {
-                var content = $"Failed to delete message. Id = [{messageId}]";
+                var content = $"Failed to delete message.";
                 var reasonPhrase = "Internal server error";
                 Utility.GenerateResponseMessage(HttpStatusCode.InternalServerError, reasonPhrase, content);
             }
 
             if (deleted)
             {
-                var content = $"Message successfully deleted. Id = [{messageId}]";
+                var content = $"Message successfully deleted.";
                 var reasonPhrase = "Message deleted";
                 Utility.GenerateResponseMessage(HttpStatusCode.OK, reasonPhrase, content);
             }
 
             if (!deleted)
             {
-                var content = $"Unable to delete message. Id = [{messageId}]";
+                var content = $"Unable to delete message.";
                 var reasonPhrase = "Message not found";
                 Utility.GenerateResponseMessage(HttpStatusCode.NotFound, reasonPhrase, content);
             }
